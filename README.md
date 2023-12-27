@@ -13,7 +13,10 @@
   - Route53
 - CI/CD
   - 미정
-
+ 
+## TO DO
+- dev server / prod server 분리
+- 인프라 작업(AWS)
 
 ## 업데이트 내역
 
