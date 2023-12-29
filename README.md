@@ -9,7 +9,6 @@
 - AWS(예정) 
   - EC2: 20.04Linux(Ubuntu)
   - RDS: MySQL8.0
-  - S3 Bucket
   - Route53
 - CI/CD
   - 미정
