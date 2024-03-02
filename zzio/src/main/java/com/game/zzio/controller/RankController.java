@@ -1,7 +1,9 @@
 package com.game.zzio.controller;
 
 import com.game.zzio.domain.CreateRankRequest;
+import com.game.zzio.domain.CreateRankResponse;
 import com.game.zzio.domain.GetRankResponse;
+import com.game.zzio.domain.GetRankResult;
 import com.game.zzio.service.RankService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +19,12 @@ public class RankController {
     private final RankService rankService;
 
     @PostMapping("")
-    public void saveRank(@RequestBody CreateRankRequest createRankRequest) {
-        rankService.createRank(createRankRequest);
+    public CreateRankResponse saveRank(@RequestBody CreateRankRequest createRankRequest) {
+        return rankService.createRank(createRankRequest);
     }
 
     @GetMapping("")
-    public List<GetRankResponse> getRank(
+    public GetRankResult getRank(
             @RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
             @RequestParam(name = "dateTime") String dateTime
     ) {

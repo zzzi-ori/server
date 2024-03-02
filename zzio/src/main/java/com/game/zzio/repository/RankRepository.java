@@ -7,8 +7,15 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface RankRepository extends JpaRepository<UserRank, Long> {
+
+    Optional<UserRank> findByNickName(String nickName);
+
     @Query("SELECT r FROM UserRank r WHERE r.createDate <= ?1 ORDER BY r.score DESC")
-    List<UserRank> findPreviousRanksOrderByScore(LocalDateTime dateTime, Pageable pageable);
+    List<UserRank> findRanksOrderByScore(Long dateTime);
+
+    @Query("SELECT r FROM UserRank r WHERE r.createDate <= ?1 ORDER BY r.score DESC")
+    List<UserRank> findPreviousRanksOrderByScore(Long dateTime, Pageable pageable);
 }

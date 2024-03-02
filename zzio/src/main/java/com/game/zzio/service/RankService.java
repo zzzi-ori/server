@@ -21,17 +21,39 @@ public class RankService {
     private final RankRepository rankRepository;
     private final int pageSize = 20;
 
-    public void createRank(CreateRankRequest createRankRequest) {
+    public CreateRankResponse createRank(CreateRankRequest createRankRequest) {
         rankRepository.save(new UserRank(createRankRequest.getNickName(), createRankRequest.getScore()));
+
+        UserRank userRank = rankRepository.findByNickName(createRankRequest.getNickName()).orElseThrow();
+        List<UserRank> rankList = rankRepository.findRanksOrderByScore(userRank.getCreateDate());
+        int count = (int) rankRepository.count();
+        int myRank = 1;
+
+        for (int i = 0; i < rankList.size(); i++) {
+            UserRank rank = rankList.get(i);
+            if (rank.getNickName().equals(createRankRequest.getNickName())) {
+                myRank = i + 1;
+                break;
+            }
+        }
+
+        return CreateRankResponse.builder()
+                .myRank(myRank)
+                .rankCount(count)
+                .currentTime(userRank.getCreateDate())
+                .build();
+
     }
 
-    public List<GetRankResponse> getRankList(int pageNumber, String dateTime) {
-        LocalDateTime targetDateTime = LocalDateTime.parse(dateTime);
-        List<UserRank> userRankList = rankRepository.findPreviousRanksOrderByScore(targetDateTime, PageRequest.of(pageNumber, pageSize));
+    public GetRankResult getRankList(int pageNumber, String dateTime) {
+        List<UserRank> userRankList = rankRepository.findPreviousRanksOrderByScore(Long.valueOf(dateTime), PageRequest.of(pageNumber, pageSize));
         List<GetRankResponse> resultList = new ArrayList<>();
 
         if (userRankList.isEmpty()) {
-            return resultList;
+            return GetRankResult.builder()
+                    .getRankResponseList(resultList)
+                    .totalCount(rankRepository.count())
+                    .build();
         }
 
         AtomicInteger rankNum = new AtomicInteger((pageNumber * pageSize) + 1);
@@ -44,7 +66,10 @@ public class RankService {
             rankNum.getAndIncrement();
         });
 
-        return resultList;
+        return GetRankResult.builder()
+                .getRankResponseList(resultList)
+                .totalCount(rankRepository.count())
+                .build();
     }
 
     public long getTotalRankCount() {

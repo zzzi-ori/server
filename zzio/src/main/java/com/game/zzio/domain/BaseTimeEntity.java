@@ -20,7 +20,7 @@ public abstract class BaseTimeEntity {
     private LocalDateTime createDate = DateTimeUtils.now();
 
     @LastModifiedDate
-    @Column(updatable = true, columnDefinition = "TIMESTAMP")
+    @Column(updatable = true)
     private LocalDateTime lastModifiedDate = DateTimeUtils.now();
 }
 
