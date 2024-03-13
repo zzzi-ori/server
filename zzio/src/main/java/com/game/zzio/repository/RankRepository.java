@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface RankRepository extends JpaRepository<UserRank, Long> {
 
-    Optional<UserRank> findByNickName(String nickName);
+    List<UserRank> findByNickName(String nickName);
 
     @Query("SELECT r FROM UserRank r WHERE r.createDate <= ?1 ORDER BY r.score DESC")
     List<UserRank> findRanksOrderByScore(Long dateTime);

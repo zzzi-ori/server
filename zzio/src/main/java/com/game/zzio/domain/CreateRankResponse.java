@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class CreateRankResponse {
-    private Integer myRank;
-    private Integer rankCount;
+    private Integer rank;
+    private Integer count;
     private Long currentTime;
 }
