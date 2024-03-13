@@ -8,10 +8,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @Transactional
@@ -24,7 +25,16 @@ public class RankService {
     public CreateRankResponse createRank(CreateRankRequest createRankRequest) {
         rankRepository.save(new UserRank(createRankRequest.getNickName(), createRankRequest.getScore()));
 
-        UserRank userRank = rankRepository.findByNickName(createRankRequest.getNickName()).orElseThrow();
+        List<UserRank> userRankList = rankRepository.findByNickName(createRankRequest.getNickName());
+        long latestCreateDate = 0L;
+        AtomicLong currentRankId = new AtomicLong();
+        userRankList.forEach(userRank -> {
+            if (userRank.getCreateDate() > latestCreateDate) {
+                currentRankId.set(userRank.getId());
+            }
+        });
+
+        UserRank userRank = rankRepository.findById(Long.parseLong(String.valueOf(currentRankId))).orElseThrow();
         List<UserRank> rankList = rankRepository.findRanksOrderByScore(userRank.getCreateDate());
         int count = (int) rankRepository.count();
         int myRank = 1;
@@ -38,8 +48,8 @@ public class RankService {
         }
 
         return CreateRankResponse.builder()
-                .myRank(myRank)
-                .rankCount(count)
+                .rank(myRank)
+                .count(count)
                 .currentTime(userRank.getCreateDate())
                 .build();
 
@@ -51,7 +61,7 @@ public class RankService {
 
         if (userRankList.isEmpty()) {
             return GetRankResult.builder()
-                    .getRankResponseList(resultList)
+                    .rankList(resultList)
                     .totalCount(rankRepository.count())
                     .build();
         }
@@ -67,8 +77,9 @@ public class RankService {
         });
 
         return GetRankResult.builder()
-                .getRankResponseList(resultList)
+                .rankList(resultList)
                 .totalCount(rankRepository.count())
+                .nextPageNumber((long) (pageNumber + 1))
                 .build();
     }
 
