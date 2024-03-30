@@ -6,7 +6,8 @@ import lombok.Data;
 @Data
 @Builder
 public class CreateRankResponse {
-    private Integer rank;
-    private Integer count;
+    private Long userId;
+    private Long rank;
+    private Long count;
     private Long currentTime;
 }

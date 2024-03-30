@@ -11,11 +11,12 @@ import java.util.Optional;
 
 public interface RankRepository extends JpaRepository<UserRank, Long> {
 
-    List<UserRank> findByNickName(String nickName);
-
-    @Query("SELECT r FROM UserRank r WHERE r.createDate <= ?1 ORDER BY r.score DESC")
+    @Query("SELECT r FROM UserRank r WHERE r.createDate <= ?1 ORDER BY r.score DESC, r.id ASC")
     List<UserRank> findRanksOrderByScore(Long dateTime);
 
-    @Query("SELECT r FROM UserRank r WHERE r.createDate <= ?1 ORDER BY r.score DESC")
+    @Query("SELECT r FROM UserRank r WHERE r.createDate <= ?1 ORDER BY r.score DESC, r.id ASC")
     List<UserRank> findPreviousRanksOrderByScore(Long dateTime, Pageable pageable);
+
+    @Query("SELECT COUNT(*) FROM UserRank r WHERE r.createDate <= ?1")
+    Long countByCreateDateTime(Long dateTime);
 }

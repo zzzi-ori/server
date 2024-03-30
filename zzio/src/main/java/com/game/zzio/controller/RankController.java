@@ -1,12 +1,10 @@
 package com.game.zzio.controller;
 
-import com.game.zzio.domain.CreateRankRequest;
-import com.game.zzio.domain.CreateRankResponse;
-import com.game.zzio.domain.GetRankResponse;
-import com.game.zzio.domain.GetRankResult;
+import com.game.zzio.domain.*;
 import com.game.zzio.service.RankService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +20,13 @@ public class RankController {
     public CreateRankResponse saveRank(@RequestBody CreateRankRequest createRankRequest) {
         return rankService.createRank(createRankRequest);
     }
+
+    @PostMapping("/event")
+    public void saveEvent(@RequestBody CreateEventRequest createEventRequest) {
+        rankService.createEvent(createEventRequest);
+    }
+
+
 
     @GetMapping("")
     public GetRankResult getRank(

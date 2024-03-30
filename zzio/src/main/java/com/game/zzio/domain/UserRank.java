@@ -16,12 +16,15 @@ public class UserRank {
     private String nickName;
 
     @Setter
-    private Integer score;
+    private String phoneNumber;
+
+    @Setter
+    private Long score;
 
     @Column(updatable = false, columnDefinition = "BIGINT")
     private long createDate = System.currentTimeMillis() / 1000L;
 
-    public UserRank(String nickName, Integer score) {
+    public UserRank(String nickName, Long score) {
         this.nickName = nickName;
         this.score = score;
     }

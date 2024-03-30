@@ -7,6 +7,6 @@ import lombok.Data;
 @Builder
 public class GetRankResponse {
     private String nickName;
-    private Integer score;
-    private Integer rank;
+    private Long score;
+    private Long rank;
 }

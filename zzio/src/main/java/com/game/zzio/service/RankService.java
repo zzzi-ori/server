@@ -23,36 +23,27 @@ public class RankService {
     private final int pageSize = 20;
 
     public CreateRankResponse createRank(CreateRankRequest createRankRequest) {
-        rankRepository.save(new UserRank(createRankRequest.getNickName(), createRankRequest.getScore()));
+        UserRank currentUserRank = rankRepository.save(new UserRank(createRankRequest.getNickName(), createRankRequest.getScore()));
 
-        List<UserRank> userRankList = rankRepository.findByNickName(createRankRequest.getNickName());
-        long latestCreateDate = 0L;
-        AtomicLong currentRankId = new AtomicLong();
-        userRankList.forEach(userRank -> {
-            if (userRank.getCreateDate() > latestCreateDate) {
-                currentRankId.set(userRank.getId());
-            }
-        });
+        Long currentRankId = currentUserRank.getId();
 
-        UserRank userRank = rankRepository.findById(Long.parseLong(String.valueOf(currentRankId))).orElseThrow();
+        UserRank userRank = rankRepository.findById(currentRankId).orElseThrow();
         List<UserRank> rankList = rankRepository.findRanksOrderByScore(userRank.getCreateDate());
-        int count = (int) rankRepository.count();
-        int myRank = 1;
-
-        for (int i = 0; i < rankList.size(); i++) {
-            UserRank rank = rankList.get(i);
-            if (rank.getNickName().equals(createRankRequest.getNickName())) {
-                myRank = i + 1;
-                break;
-            }
-        }
+        Long count = rankRepository.countByCreateDateTime(userRank.getCreateDate());
+        Long myRank = (long) rankList.indexOf(currentUserRank)+1;
 
         return CreateRankResponse.builder()
+                .userId(userRank.getId())
                 .rank(myRank)
                 .count(count)
                 .currentTime(userRank.getCreateDate())
                 .build();
 
+    }
+
+    public void createEvent(CreateEventRequest createEventRequest) {
+        UserRank userRank = rankRepository.findById(createEventRequest.getUserId()).orElseThrow();
+        userRank.setPhoneNumber(createEventRequest.getPhoneNumber());
     }
 
     public GetRankResult getRankList(int pageNumber, String dateTime) {
@@ -71,14 +62,16 @@ public class RankService {
             resultList.add(GetRankResponse.builder()
                     .score(userRank.getScore())
                     .nickName(userRank.getNickName())
-                    .rank(Integer.parseInt(String.valueOf(rankNum)))
+                    .rank(Long.parseLong(String.valueOf(rankNum)))
                     .build());
             rankNum.getAndIncrement();
         });
 
+        Long count = rankRepository.countByCreateDateTime(Long.valueOf(dateTime));
+
         return GetRankResult.builder()
                 .rankList(resultList)
-                .totalCount(rankRepository.count())
+                .totalCount(count)
                 .nextPageNumber((long) (pageNumber + 1))
                 .build();
     }
