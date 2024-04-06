@@ -6,4 +6,5 @@ import lombok.Data;
 public class CreateRankRequest {
     private String nickName;
     private Long score;
+    private String gameId;
 }

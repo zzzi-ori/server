@@ -24,8 +24,11 @@ public class UserRank {
     @Column(updatable = false, columnDefinition = "BIGINT")
     private long createDate = System.currentTimeMillis() / 1000L;
 
-    public UserRank(String nickName, Long score) {
+    private String gameId;
+
+    public UserRank(String nickName, Long score, String gameId) {
         this.nickName = nickName;
         this.score = score;
+        this.gameId = gameId;
     }
 }

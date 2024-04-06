@@ -23,7 +23,7 @@ public class RankService {
     private final int pageSize = 20;
 
     public CreateRankResponse createRank(CreateRankRequest createRankRequest) {
-        UserRank currentUserRank = rankRepository.save(new UserRank(createRankRequest.getNickName(), createRankRequest.getScore()));
+        UserRank currentUserRank = rankRepository.save(new UserRank(createRankRequest.getNickName(), createRankRequest.getScore(), createRankRequest.getGameId()));
 
         Long currentRankId = currentUserRank.getId();
 
