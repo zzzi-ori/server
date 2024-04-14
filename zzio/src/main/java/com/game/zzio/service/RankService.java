@@ -1,6 +1,8 @@
 package com.game.zzio.service;
 
-import com.game.zzio.domain.*;
+import com.game.zzio.domain.log.UserLog;
+import com.game.zzio.domain.rank.*;
+import com.game.zzio.repository.LogRepository;
 import com.game.zzio.repository.RankRepository;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -10,9 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @Transactional
@@ -20,12 +20,15 @@ import java.util.concurrent.atomic.AtomicLong;
 public class RankService {
 
     private final RankRepository rankRepository;
+    private final LogRepository logRepository;
     private final int pageSize = 20;
 
     public CreateRankResponse createRank(CreateRankRequest createRankRequest) {
         UserRank currentUserRank = rankRepository.save(new UserRank(createRankRequest.getNickName(), createRankRequest.getScore(), createRankRequest.getGameId()));
 
         Long currentRankId = currentUserRank.getId();
+
+        logRepository.save(new UserLog(currentRankId, createRankRequest.getLogData()));
 
         UserRank userRank = rankRepository.findById(currentRankId).orElseThrow();
         List<UserRank> rankList = rankRepository.findRanksOrderByScore(userRank.getCreateDate());
@@ -63,6 +66,7 @@ public class RankService {
                     .score(userRank.getScore())
                     .nickName(userRank.getNickName())
                     .rank(Long.parseLong(String.valueOf(rankNum)))
+                    .eventYn(!(userRank.getPhoneNumber() == null))
                     .build());
             rankNum.getAndIncrement();
         });

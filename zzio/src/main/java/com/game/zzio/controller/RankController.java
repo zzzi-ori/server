@@ -1,13 +1,13 @@
 package com.game.zzio.controller;
 
-import com.game.zzio.domain.*;
+import com.game.zzio.domain.rank.CreateEventRequest;
+import com.game.zzio.domain.rank.CreateRankRequest;
+import com.game.zzio.domain.rank.CreateRankResponse;
+import com.game.zzio.domain.rank.GetRankResult;
 import com.game.zzio.service.RankService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/rank")

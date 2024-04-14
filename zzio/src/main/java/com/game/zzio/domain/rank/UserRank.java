@@ -1,4 +1,4 @@
-package com.game.zzio.domain;
+package com.game.zzio.domain.rank;
 
 import jakarta.persistence.*;
 import lombok.Getter;
